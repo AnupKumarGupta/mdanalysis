@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function
+from MDAnalysisTests.plugins.knownfailure import knownfailure
 
 from nose.tools import raises
 from numpy.testing import assert_equal, assert_almost_equal
@@ -261,6 +262,16 @@ class TestDCDWrite(object):
                 box = frame.unitcell.astype(np.float64)
                 f_out.write(xyz=frame.x, box=box)
 
+    def _test_written_unit_cell(self):
+        # written unit cell dimensions should match for all frames
+        with DCDFile(self.testfile) as test, DCDFile(self.readfile) as ref:
+            curr_frame = 0
+            while curr_frame < test.n_frames:
+                written_unitcell = test.read().unitcell
+                ref_unitcell = ref.read().unitcell
+                curr_frame += 1
+                assert_almost_equal(written_unitcell, ref_unitcell)
+
     def tearDown(self):
         try:
             os.unlink(self.testfile)
@@ -288,14 +299,7 @@ class TestDCDWrite(object):
                 assert_equal(xyz.shape, expected)
 
     def test_written_unit_cell(self):
-        # written unit cell dimensions should match for all frames
-        with DCDFile(self.testfile) as test, DCDFile(self.readfile) as ref:
-            curr_frame = 0
-            while curr_frame < test.n_frames:
-                written_unitcell = test.read().unitcell
-                ref_unitcell = ref.read().unitcell
-                curr_frame += 1
-                assert_almost_equal(written_unitcell, ref_unitcell)
+        self._test_written_unit_cell()
 
     def test_written_num_frames(self):
         with DCDFile(self.testfile) as f:
@@ -431,10 +435,11 @@ class TestDCDWriteNAMD(TestDCDWrite):
         self.expected_remarks = '''Created by DCD pluginREMARKS Created 06 July, 2014 at 17:29Y5~CORD,'''
         self._write_files(testfile=self.testfile, remarks_setting='input')
 
+    #@knownfailure
     def test_written_unit_cell(self):
         # there's no expectation that we can write unit cell
         # data in NAMD format at the moment
-        pass
+        self._test_written_unit_cell()
 
 
 class TestDCDWriteCharmm36(TestDCDWrite):
@@ -452,10 +457,11 @@ class TestDCDWriteCharmm36(TestDCDWrite):
         self.expected_remarks = '* CHARMM TRICLINIC BOX TESTING                                                  * (OLIVER BECKSTEIN 2014)                                                       * BASED ON NPTDYN.INP : SCOTT FELLER, NIH, 7/15/95                              '
         self._write_files(testfile=self.testfile, remarks_setting='input')
 
+    #@knownfailure
     def test_written_unit_cell(self):
         # there's no expectation that we can write unit cell
-        # data in NAMD format at the moment
-        pass
+        # data in charmm format at the moment
+        self._test_written_unit_cell()
 
 
 class TestDCDWriteHeaderNAMD(TestDCDWriteHeader):
