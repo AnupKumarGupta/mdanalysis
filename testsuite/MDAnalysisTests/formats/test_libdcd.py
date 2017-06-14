@@ -159,7 +159,7 @@ class TestDCDReadFrame(object):
 class TestDCDWriteHeader(object):
     def setUp(self):
         self.tmpdir = tempdir.TempDir()
-        self.testfile = self.tmpdir.name + '/test.dcd'
+        self.testfile = os.path.join(self.tmpdir.name, 'test.dcd')
         self.dcdfile = DCD
 
     def tearDown(self):
@@ -237,8 +237,8 @@ class TestDCDWriteHeader(object):
 class TestDCDWrite(object):
     def setUp(self):
         self.tmpdir = tempdir.TempDir()
-        self.testfile = self.tmpdir.name + '/test.dcd'
-        self.testfile2 = self.tmpdir.name + '/test2.dcd'
+        self.testfile = os.path.join(self.tmpdir.name, 'test.dcd')
+        self.testfile2 = os.path.join(self.tmpdir.name, 'test2.dcd')
         self.readfile = DCD
         self.natoms = 3341
         self.expected_frames = 98
@@ -421,8 +421,8 @@ class TestDCDWriteNAMD(TestDCDWrite):
 
     def setUp(self):
         self.tmpdir = tempdir.TempDir()
-        self.testfile = self.tmpdir.name + '/test.dcd'
-        self.testfile2 = self.tmpdir.name + '/test2.dcd'
+        self.testfile = os.path.join(self.tmpdir.name, 'test.dcd')
+        self.testfile2 = os.path.join(self.tmpdir.name, 'test2.dcd')
         self.readfile = DCD_NAMD_TRICLINIC
         self.natoms = 5545
         self.expected_frames = 1
@@ -442,8 +442,8 @@ class TestDCDWriteCharmm36(TestDCDWrite):
 
     def setUp(self):
         self.tmpdir = tempdir.TempDir()
-        self.testfile = self.tmpdir.name + '/test.dcd'
-        self.testfile2 = self.tmpdir.name + '/test2.dcd'
+        self.testfile = os.path.join(self.tmpdir.name, 'test.dcd')
+        self.testfile2 = os.path.join(self.tmpdir.name, 'test2.dcd')
         self.readfile = DCD_TRICLINIC
         self.natoms = 375
         self.expected_frames = 10
@@ -462,7 +462,7 @@ class TestDCDWriteHeaderNAMD(TestDCDWriteHeader):
 
     def setUp(self):
         self.tmpdir = tempdir.TempDir()
-        self.testfile = self.tmpdir.name + '/test.dcd'
+        self.testfile = os.path.join(self.tmpdir.name, 'test.dcd')
         self.dcdfile = DCD_NAMD_TRICLINIC
 
 
@@ -471,7 +471,7 @@ class TestDCDWriteHeaderCharmm36(TestDCDWriteHeader):
 
     def setUp(self):
         self.tmpdir = tempdir.TempDir()
-        self.testfile = self.tmpdir.name + '/test.dcd'
+        self.testfile = os.path.join(self.tmpdir.name, 'test.dcd')
         self.dcdfile = DCD_TRICLINIC
 
 
@@ -520,7 +520,7 @@ class TestDCDWriteRandom(object):
 
     def setUp(self):
         self.tmpdir = tempdir.TempDir()
-        self.testfile = self.tmpdir.name + '/test.dcd'
+        self.testfile = os.path.join(self.tmpdir.name, 'test.dcd')
         self.readfile = DCD
         self.natoms = 3341
         self.expected_frames = 98
