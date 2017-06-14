@@ -2,7 +2,8 @@ from __future__ import absolute_import, print_function
 
 from nose.tools import raises
 from numpy.testing import assert_equal, assert_almost_equal
-from numpy.testing import assert_allclose, assert_array_almost_equal
+from numpy.testing import (assert_allclose, assert_array_almost_equal,
+                           assert_)
 
 from MDAnalysis.lib.formats.libdcd import DCDFile
 from MDAnalysisTests.datafiles import (
@@ -570,7 +571,7 @@ class TestDCDByteArithmetic(object):
             first_frame_size = dcd._firstframesize
             general_frame_size = dcd._framesize
 
-        assert_equal(first_frame_size >= general_frame_size, True)
+        assert_(first_frame_size >= general_frame_size)
 
     def test_file_size_breakdown(self):
         # the size of a DCD file is equivalent to the sum of the header
