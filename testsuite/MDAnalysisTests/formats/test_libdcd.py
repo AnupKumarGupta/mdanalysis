@@ -294,7 +294,7 @@ class TestDCDWrite(object):
                 written_unitcell = test.read().unitcell
                 ref_unitcell = ref.read().unitcell
                 curr_frame += 1
-                assert_equal(written_unitcell, ref_unitcell)
+                assert_almost_equal(written_unitcell, ref_unitcell)
 
     def test_written_num_frames(self):
         with DCDFile(self.testfile) as f:
