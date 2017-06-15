@@ -148,6 +148,11 @@ cdef class DCDFile:
     >>> with DCDFile('foo.dcd') as f:
     >>>     for frame in f:
     >>>         print(frame.x)
+
+
+    Raises
+    ------
+    IOError
     """
     cdef fio_fd fp
     cdef readonly fname
@@ -491,6 +496,11 @@ cdef class DCDFile:
         unitcell is read as is from DCD. Post processing depending on the program this
         DCD file was written with is necessary. Have a look at the MDAnalysis DCD reader
         for possible post processing into a common unitcell data structure.
+
+        Raises
+        ------
+        IOError
+        StopIteration
         """
         if self.reached_eof:
             raise IOError('Reached last frame in DCD, seek to 0')
@@ -527,12 +537,12 @@ cdef class DCDFile:
 
         Parameters
         ----------
-        start : int
-            starting frame
-        stop : int
-            stop frame
-        step : int
-            step between frames read
+        start : int (optional)
+            starting frame, default to 0
+        stop : int (optional)
+            stop frame, default to ``n_frames``
+        step : int (optional)
+            step between frames read, defaults to 1
         order : str (optional)
             give order of returned array with `f`:frames, `a`:atoms, `c`:coordinates
         indices : array_like (optional)
@@ -549,6 +559,11 @@ cdef class DCDFile:
         unitcell is read as it from DCD. Post processing depending the program this
         DCD file was written with is necessary. Have a look at the MDAnalysis DCD reader
         for possible post processing into a common unitcell data structure.
+
+        Raises
+        ------
+        IOError
+        ValueError
         """
         if self.reached_eof:
             raise IOError('Reached last frame in DCD, seek to 0')
