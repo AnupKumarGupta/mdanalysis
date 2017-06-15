@@ -197,15 +197,16 @@ class TestDCDWriteHeader(object):
 
     @raises(IOError)
     def test_write_no_header(self):
-        # test that _write_header() can produce a very crude
-        # header for a new / empty file
+        # an IOError should be raised if we
+        # attempt to write inappropriate header
+        # data that looks like frame data
         with DCDFile(self.testfile, 'w') as dcd:
             dcd.write(np.ones(3), np.ones(6))
 
     @raises(IOError)
     def test_write_header_twice(self):
-        # test that _write_header() can produce a very crude
-        # header for a new / empty file
+        # an IOError should be raised if a duplicate
+        # header writing is attempted
         with DCDFile(self.testfile, 'w') as dcd:
             dcd.write_header(
                 remarks='Crazy!',
