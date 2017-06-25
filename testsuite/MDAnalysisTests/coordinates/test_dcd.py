@@ -21,12 +21,12 @@
 #
 from __future__ import absolute_import, print_function
 from six.moves import zip, range
-import MDAnalysis as mda
-from MDAnalysis.coordinates.DCD import DCDReader
 import numpy as np
 import os
 
-from nose.plugins.attrib import attr
+import MDAnalysis as mda
+from MDAnalysis.coordinates.DCD import DCDReader
+
 from numpy.testing import (assert_equal, assert_array_equal, assert_raises,
                            assert_almost_equal, assert_array_almost_equal,
                            assert_allclose, dec)
@@ -36,11 +36,14 @@ from MDAnalysisTests.datafiles import (DCD, PSF, DCD_empty, CRD, PRMncdf, NCDF,
 from MDAnalysisTests.coordinates.reference import (RefCHARMMtriclinicDCD,
                                                    RefNAMDtriclinicDCD)
 
-from MDAnalysisTests.coordinates.base import (MultiframeReaderTest, BaseReference,
+from MDAnalysisTests.coordinates.base import (MultiframeReaderTest,
+                                              BaseReference,
                                               BaseWriterTest,
                                               assert_timestep_almost_equal)
 
 from MDAnalysisTests import tempdir
+from unittest import TestCase
+import pytest
 
 
 class DCDReference(BaseReference):
@@ -89,6 +92,25 @@ class TestDCDWriter(BaseWriterTest):
         if reference is None:
             reference = DCDReference()
         super(TestDCDWriter, self).__init__(reference)
+
+
+def test_write_random_unitcell(tmpdir):
+    with tmpdir.as_cwd():
+        testname = 'test.dcd'
+        rstate = np.random.RandomState(1178083)
+        random_unitcells = rstate.uniform(
+            high=80, size=(98, 6)).astype(np.float64)
+
+        u = mda.Universe(PSF, DCD)
+        with mda.Writer(testname, n_atoms=u.atoms.n_atoms) as w:
+            for index, ts in enumerate(u.trajectory):
+                u.atoms.dimensions = random_unitcells[index]
+                w.write(u.atoms)
+
+        u2 = mda.Universe(PSF, testname)
+        for index, ts in enumerate(u2.trajectory):
+            assert_array_almost_equal(ts.dimensions, random_unitcells[index],
+                                      decimal=5)
 
 
 ################
@@ -309,7 +331,6 @@ class TestDCDWriter_Issue59(object):
         del self.u
         del self.tmpdir
 
-    @attr('issue')
     def test_issue59(self):
         """Test writing of XTC to DCD (Issue 59)"""
         xtc = mda.Universe(PSF, self.xtc)
@@ -372,7 +393,6 @@ class _TestDCDReader_TriclinicUnitcell(TestCase):
         del self.u
         del self.tempdir
 
-    @attr('issue')
     def test_read_triclinic(self):
         """test reading of triclinic unitcell (Issue 187) for NAMD or new
         CHARMM format (at least since c36b2)"""
@@ -383,7 +403,6 @@ class _TestDCDReader_TriclinicUnitcell(TestCase):
                                       "beta,gamma not identical at frame "
                                       "{}".format(ts.frame))
 
-    @attr('issue')
     def test_write_triclinic(self):
         """test writing of triclinic unitcell (Issue 187) for NAMD or new
         CHARMM format (at least since c36b2)"""
@@ -430,7 +449,6 @@ class TestNCDF2DCD(object):
         del self.w
         del self.tmpdir
 
-    @attr('issue')
     def test_unitcell(self):
         """NCDFReader: Test that DCDWriter correctly writes the CHARMM
         unit cell"""
