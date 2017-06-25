@@ -26,6 +26,7 @@ import os
 
 import MDAnalysis as mda
 from MDAnalysis.coordinates.DCD import DCDReader
+from MDAnalysis.exceptions import NoDataError
 
 from numpy.testing import (assert_equal, assert_array_equal, assert_raises,
                            assert_almost_equal, assert_array_almost_equal,
@@ -107,7 +108,8 @@ def test_write_random_unitcell(tmpdir):
 
         u2 = mda.Universe(PSF, testname)
         for index, ts in enumerate(u2.trajectory):
-            assert_array_almost_equal(ts.dimensions, random_unitcells[index],
+            assert_array_almost_equal(u2.trajectory.dimensions,
+                                      random_unitcells[index],
                                       decimal=5)
 
 
@@ -196,6 +198,18 @@ def test_timeseries_atomindices(indices, universe_dcd):
         assert_array_almost_equal(xyz, allframes[indices])
 
 
+def test_timeseries_empty_selection(universe_dcd):
+    with pytest.raises(NoDataError):
+        asel = universe_dcd.select_atoms('name FOO')
+        universe_dcd.trajectory.timeseries(asel=asel)
+
+
+def test_timeseries_skip(universe_dcd):
+    with pytest.warns(DeprecationWarning):
+        xyz = universe_dcd.trajectory.timeseries(skip=2, format='fac')
+    assert len(xyz) == universe_dcd.trajectory.n_frames / 2
+
+
 def test_reader_set_dt():
     dt = 100
     frame = 3
@@ -262,6 +276,17 @@ def test_single_frame(universe_dcd, tmpdir):
                             u.atoms.positions,
                             3,
                             err_msg="coordinates do not match")
+
+
+def test_write_no_natoms():
+    with pytest.raises(ValueError):
+        mda.Writer('foobar.dcd')
+
+
+def test_writer_trajectory_no_natoms(tmpdir, universe_dcd):
+    with tmpdir.as_cwd():
+        universe_dcd.trajectory.Writer("foo.dcd")
+
 
 
 @pytest.mark.parametrize("ref", (RefCHARMMtriclinicDCD, RefNAMDtriclinicDCD))
