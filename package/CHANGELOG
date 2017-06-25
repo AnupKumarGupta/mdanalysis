@@ -13,7 +13,7 @@ The rules for this file:
   * release numbers follow "Semantic Versioning" http://semver.org
 
 ------------------------------------------------------------------------------
-mm/dd/17 richardjgowers, rathann, orbeckst
+mm/dd/17 richardjgowers, rathann, orbeckst, kain88-de, tyler.je.reddy
 
   * 0.17.0
 
@@ -26,7 +26,7 @@ Deprecations
 Fixes
   * correctly read little-endian TRZ files on big-endian architectures (issue
     #1424)
-    
+
 Changes
   * remove deprecated TimeSeriesCollection
   * remove deprecated analysis.align.rms_fit_trj
@@ -36,10 +36,14 @@ Changes
   * remove deprecated analysis.rms `target` keyword from functions
 
 
-mm/dd/17 richardjgowers, rathann, jbarnoud, kain88-de
+mm/dd/17 richardjgowers, rathann, jbarnoud, orbeckst, utkbansal
 
   * 0.16.2
 
+Deprecations
+  * deprecated core.Timeseries module for 0.17.0 (Issue #1383)
+  * deprecated instant selectors for 1.0 (Issue #1377)
+  * deprecated the core.flag registry for 1.0 (Issue #782)
 
 Fixes
   * fixed GROWriter truncating long resids from the wrong end (Issue #1395)
