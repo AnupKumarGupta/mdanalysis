@@ -358,38 +358,39 @@ def test_written_unit_cell(written_dcd):
             assert_array_almost_equal(frame.unitcell, o_frame.unitcell)
 
 
-def test_write_all_dtypes(tmpdir):
+@pytest.mark.parametrize(
+    "dtype", (np.int32, np.int64, np.float32, np.float64, int, float))
+def test_write_all_dtypes(tmpdir, dtype):
     with tmpdir.as_cwd():
-        for dtype in (np.int32, np.int64, np.float32, np.float64):
-            with DCDFile('foo.dcd', 'w') as out:
-                natoms = 10
-                xyz = np.ones((natoms, 3), dtype=dtype)
-                box = np.ones(6, dtype=dtype)
-                out.write_header(
-                    remarks='test',
-                    natoms=natoms,
-                    charmm=1,
-                    delta=1,
-                    nsavc=1,
-                    istart=1)
-                out.write(xyz=xyz, box=box)
+        with DCDFile('foo.dcd', 'w') as out:
+            natoms = 10
+            xyz = np.ones((natoms, 3), dtype=dtype)
+            box = np.ones(6, dtype=dtype)
+            out.write_header(
+                remarks='test',
+                natoms=natoms,
+                charmm=1,
+                delta=1,
+                nsavc=1,
+                istart=1)
+            out.write(xyz=xyz, box=box)
 
 
-def test_write_array_like(tmpdir):
+@pytest.mark.parametrize("array_like", (np.array, list))
+def test_write_array_like(tmpdir, array_like):
     with tmpdir.as_cwd():
-        for array_like in (np.array, list):
-            with DCDFile('foo.dcd', 'w') as out:
-                natoms = 10
-                xyz = array_like([[1, 1, 1] for i in range(natoms)])
-                box = array_like([i for i in range(6)])
-                out.write_header(
-                    remarks='test',
-                    natoms=natoms,
-                    charmm=1,
-                    delta=1,
-                    nsavc=1,
-                    istart=1)
-                out.write(xyz=xyz, box=box)
+        with DCDFile('foo.dcd', 'w') as out:
+            natoms = 10
+            xyz = array_like([[1, 1, 1] for i in range(natoms)])
+            box = array_like([i for i in range(6)])
+            out.write_header(
+                remarks='test',
+                natoms=natoms,
+                charmm=1,
+                delta=1,
+                nsavc=1,
+                istart=1)
+            out.write(xyz=xyz, box=box)
 
 
 def test_write_wrong_shape_xyz(tmpdir):
